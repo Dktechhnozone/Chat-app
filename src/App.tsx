@@ -68,6 +68,7 @@ export default function App() {
   const [avatarSeed, setAvatarSeed] = useState("Buster");
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
+  const [isAuthNotEnabled, setIsAuthNotEnabled] = useState(false);
 
   // App settings
   const [darkMode, setDarkMode] = useState(true);
@@ -272,6 +273,7 @@ export default function App() {
     e.preventDefault();
     setAuthError("");
     setAuthLoading(true);
+    setIsAuthNotEnabled(false);
 
     if (!email || !password) {
       setAuthError("Email and Password are required.");
@@ -312,6 +314,9 @@ export default function App() {
         setAuthError("This email is already in use.");
       } else if (err.code === "auth/invalid-credential") {
         setAuthError("Invalid email or password.");
+      } else if (err.code === "auth/operation-not-allowed") {
+        setIsAuthNotEnabled(true);
+        setAuthError("Email/Password authentication is currently disabled in your Firebase console.");
       } else {
         setAuthError(err.message || "An authentication error occurred.");
       }
@@ -683,8 +688,35 @@ export default function App() {
           {/* Form */}
           <form onSubmit={handleAuth} className="space-y-4">
             {authError && (
-              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center">
-                {authError}
+              <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                <div className="text-center font-medium mb-1">{authError}</div>
+                {isAuthNotEnabled && (
+                  <div className="mt-3 p-3 bg-slate-950/80 rounded-lg text-[11px] text-slate-300 space-y-2 border border-slate-800">
+                    <p className="font-semibold text-amber-400 flex items-center gap-1">
+                      <Lock className="w-3.5 h-3.5" />
+                      Action Required: Enable Email Sign-In
+                    </p>
+                    <p className="leading-relaxed">
+                      To fix this, you must enable the <strong>Email/Password</strong> sign-in provider in your Firebase project:
+                    </p>
+                    <ol className="list-decimal pl-4 space-y-1 text-slate-400">
+                      <li>Open your Firebase Console using the button below.</li>
+                      <li>Go to <strong>Authentication</strong> &gt; <strong>Sign-in method</strong> tab.</li>
+                      <li>Click <strong>Add new provider</strong> and choose <strong>Email/Password</strong>.</li>
+                      <li>Toggle it to <strong>Enable</strong> and click <strong>Save</strong>.</li>
+                    </ol>
+                    <div className="pt-1.5">
+                      <a
+                        href="https://console.firebase.google.com/project/gen-lang-client-0365314830/authentication/providers"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center w-full px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-[11px] transition-colors"
+                      >
+                        Open Firebase Console ↗
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
