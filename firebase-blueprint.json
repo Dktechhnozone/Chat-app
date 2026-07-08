@@ -1,0 +1,135 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Represents a registered user in the chat application.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The Firebase Authentication UID of the user."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address."
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "The user's profile image URL."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["online", "offline"],
+          "description": "The presence status of the user."
+        },
+        "lastSeen": {
+          "type": "object",
+          "description": "Timestamp indicating when the user was last active."
+        },
+        "typingIn": {
+          "type": "string",
+          "description": "The ID of the chat the user is actively typing in, or null."
+        }
+      },
+      "required": ["uid", "displayName", "email", "status"]
+    },
+    "Chat": {
+      "title": "Chat",
+      "description": "Represents a private (1-on-1) or group chat session.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique chat ID."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the chat (used for group chats)."
+        },
+        "isGroup": {
+          "type": "boolean",
+          "description": "Whether the chat is a group chat or 1-on-1."
+        },
+        "members": {
+          "type": "array",
+          "description": "Array of user UIDs who are members of this chat."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Timestamp when the chat was created."
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "UID of the user who created the chat."
+        },
+        "lastMessage": {
+          "type": "object",
+          "description": "The latest message details for previewing in the list."
+        }
+      },
+      "required": ["id", "isGroup", "members", "createdAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Represents a message sent within a chat.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique message ID."
+        },
+        "text": {
+          "type": "string",
+          "description": "The text content of the message."
+        },
+        "senderId": {
+          "type": "string",
+          "description": "UID of the message sender."
+        },
+        "senderName": {
+          "type": "string",
+          "description": "Display name of the message sender."
+        },
+        "senderPhoto": {
+          "type": "string",
+          "description": "Profile picture URL of the message sender."
+        },
+        "timestamp": {
+          "type": "object",
+          "description": "Timestamp when the message was sent."
+        },
+        "fileUrl": {
+          "type": "string",
+          "description": "Optional URL for uploaded files/images."
+        },
+        "fileName": {
+          "type": "string",
+          "description": "Optional name of the uploaded file."
+        },
+        "fileType": {
+          "type": "string",
+          "description": "Optional MIME type of the uploaded file."
+        }
+      },
+      "required": ["id", "senderId", "senderName", "timestamp"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Profile document for each user, keyed by user UID."
+    },
+    "chats/{chatId}": {
+      "schema": "Chat",
+      "description": "Conversations metadata."
+    },
+    "chats/{chatId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Sub-collection containing all messages sent in a specific chat."
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Real-Time Chat",
+  "description": "A polished, responsive real-time chat application with group chats, presence indicators, file sharing, and an integrated Gemini AI assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
